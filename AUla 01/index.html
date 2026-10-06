@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HelpDesk Acadêmico</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<section id="loginScreen" class="login-screen">
+  <div class="login-brand"><span class="brand-mark">H</span><div><b>HelpDesk</b><small>Acadêmico</small></div></div>
+  <div class="login-layout">
+    <div class="login-copy">
+      <span class="eyebrow">CENTRAL DE SUPORTE</span>
+      <h1>Seu suporte,<br><em>mais simples.</em></h1>
+      <p>Abra chamados, acompanhe solicitações e mantenha tudo organizado em um só lugar.</p>
+      <div class="login-points"><span>✓ Atendimento organizado</span><span>✓ Acompanhamento em tempo real</span><span>✓ Histórico de solicitações</span></div>
+    </div>
+    <div class="login-card">
+      <div class="login-icon">↗</div>
+      <h2>Bem-vindo de volta</h2>
+      <p>Entre para acessar sua central de suporte.</p>
+      <form id="loginForm">
+        <label>E-mail<input id="email" type="email" value="usuario@helpdesk.local" required></label>
+        <label>Senha<div class="password-wrap"><input id="password" type="password" value="Usuario123!" required><button type="button" onclick="togglePassword()">◉</button></div></label>
+        <button class="btn primary full" type="submit">Entrar na plataforma <span>→</span></button>
+      </form>
+      <div class="demo-box"><b>Acesso demonstrativo</b><span>usuario@helpdesk.local · Usuario123!</span></div>
+    </div>
+  </div>
+</section>
+
+<div id="app" class="app" hidden>
+<aside class="sidebar">
+  <div class="side-brand"><span class="brand-mark">H</span><div><b>HelpDesk</b><small>Acadêmico</small></div></div>
+  <nav>
+    <button class="nav active" onclick="showSection('dashboard',this)">⌂ <span>Visão geral</span></button>
+    <button class="nav" onclick="showSection('tickets',this)">▣ <span>Meus chamados</span><strong id="navCount">3</strong></button>
+    <button class="nav" onclick="openTicketForm()">＋ <span>Novo chamado</span></button>
+  </nav>
+  <div class="side-bottom">
+    <div class="profile-mini"><div class="avatar">U</div><div><b>Usuário Demo</b><small>Solicitante</small></div></div>
+    <button class="logout" onclick="logout()">↪ <span>Sair</span></button>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar"><div><span class="mobile-title">HelpDesk Acadêmico</span><span id="sectionLabel">Visão geral</span></div><div class="top-actions"><span class="online">● Online</span><button class="bell">♢<i>2</i></button><div class="avatar">U</div></div></header>
+
+<section id="dashboard" class="section">
+  <div class="hero"><div><span class="eyebrow">PAINEL DO SOLICITANTE</span><h1>Olá, Usuário! <span>👋</span></h1><p>Acompanhe suas solicitações e abra um novo chamado quando precisar.</p></div><button class="btn primary" onclick="openTicketForm()">＋ Abrir chamado</button></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-icon blue">▣</div><div><small>Total de chamados</small><strong id="total">3</strong><span>Todos os registros</span></div></div>
+    <div class="stat"><div class="stat-icon amber">◷</div><div><small>Em andamento</small><strong id="progress">1</strong><span>Aguardando atendimento</span></div></div>
+    <div class="stat"><div class="stat-icon green">✓</div><div><small>Resolvidos</small><strong id="resolved">1</strong><span>Atendimentos concluídos</span></div></div>
+    <div class="stat"><div class="stat-icon red">!</div><div><small>Alta prioridade</small><strong id="high">1</strong><span>Precisam de atenção</span></div></div>
+  </div>
+  <div class="grid-main">
+    <div class="panel">
+      <div class="panel-head"><div><h2>Chamados recentes</h2><p>Suas últimas solicitações</p></div><button class="text-btn" onclick="showSection('tickets')">Ver todos →</button></div>
+      <div id="recentList"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div><h2>Resumo</h2><p>Status dos seus chamados</p></div></div>
+      <div class="donut-wrap"><div class="donut"><div><b id="donutTotal">3</b><small>chamados</small></div></div><div class="legend"><span><i class="dot blue"></i> Abertos <b id="openLegend">1</b></span><span><i class="dot amber"></i> Em andamento <b id="progLegend">1</b></span><span><i class="dot green"></i> Resolvidos <b id="resLegend">1</b></span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="tickets" class="section" hidden>
+  <div class="hero compact"><div><span class="eyebrow">ATENDIMENTO</span><h1>Meus chamados</h1><p>Consulte e acompanhe suas solicitações.</p></div><button class="btn primary" onclick="openTicketForm()">＋ Novo chamado</button></div>
+  <div class="panel">
+    <div class="filters"><div class="search">⌕<input id="search" placeholder="Buscar por título ou número..." oninput="renderAll()"></div><select id="filterStatus" onchange="renderAll()"><option value="">Todos os status</option><option>Aberto</option><option>Em andamento</option><option>Resolvido</option></select><select id="filterPriority" onchange="renderAll()"><option value="">Todas as prioridades</option><option>Baixa</option><option>Média</option><option>Alta</option><option>Crítica</option></select></div>
+    <div class="table-wrap"><table><thead><tr><th>Chamado</th><th>Categoria</th><th>Prioridade</th><th>Status</th><th>Atualizado</th><th></th></tr></thead><tbody id="ticketTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="formSection" class="section" hidden>
+  <div class="hero compact"><div><span class="eyebrow">NOVA SOLICITAÇÃO</span><h1>Abrir chamado</h1><p>Conte o que aconteceu para nossa equipe ajudar.</p></div><button class="btn ghost" onclick="showSection('dashboard')">← Voltar</button></div>
+  <div class="panel form-panel"><form id="newTicket"><div class="field"><label>Título do chamado</label><input id="newTitle" required placeholder="Ex.: Computador não liga"></div><div class="field"><label>Descrição</label><textarea id="newDesc" rows="6" required placeholder="Descreva o problema com o máximo de detalhes possível..."></textarea></div><div class="form-grid"><div class="field"><label>Categoria</label><select id="newCat"><option>Hardware</option><option>Software</option><option>Acesso</option><option>Rede</option><option>Outro</option></select></div><div class="field"><label>Prioridade</label><select id="newPriority"><option>Baixa</option><option>Média</option><option>Alta</option><option>Crítica</option></select></div></div><div class="form-actions"><button type="button" class="btn ghost" onclick="showSection('dashboard')">Cancelar</button><button class="btn primary">Enviar chamado →</button></div></form></div>
+</section>
+
+<section id="detailSection" class="section" hidden></section>
+</main>
+</div>
+
+<script>
+let tickets=JSON.parse(localStorage.getItem("hd_tickets")||"null")||[
+{id:1042,title:"Computador não liga",desc:"O computador do laboratório 03 não está ligando.",cat:"Hardware",priority:"Alta",status:"Aberto",date:"Hoje, 14:32"},
+{id:1041,title:"Acesso ao sistema acadêmico",desc:"Solicitação de recuperação de acesso.",cat:"Acesso",priority:"Média",status:"Em andamento",date:"Ontem, 10:18"},
+{id:1038,title:"Instalação de software",desc:"Instalação de ferramenta necessária para a disciplina.",cat:"Software",priority:"Baixa",status:"Resolvido",date:"03 out, 16:45"}
+];
+const save=()=>localStorage.setItem("hd_tickets",JSON.stringify(tickets));
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+function toast(m){let t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+function togglePassword(){let x=document.getElementById("password");x.type=x.type==="password"?"text":"password"}
+function login(){document.getElementById("loginScreen").hidden=true;document.getElementById("app").hidden=false;renderAll()}
+function logout(){document.getElementById("app").hidden=true;document.getElementById("loginScreen").hidden=false}
+document.getElementById("loginForm").onsubmit=e=>{e.preventDefault();login()}
+function showSection(id,btn){
+  document.querySelectorAll(".section").forEach(s=>s.hidden=true);
+  document.getElementById(id).hidden=false;
+  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+  document.getElementById("sectionLabel").textContent=id==="dashboard"?"Visão geral":id==="tickets"?"Meus chamados":id==="formSection"?"Novo chamado":"Detalhes do chamado";
+  if(id==="tickets")renderAll(); window.scrollTo(0,0)
+}
+function openTicketForm(){showSection("formSection")}
+document.getElementById("newTicket").onsubmit=e=>{e.preventDefault();tickets.unshift({id:Math.max(...tickets.map(t=>t.id),1042)+1,title:newTitle.value,desc:newDesc.value,cat:newCat.value,priority:newPriority.value,status:"Aberto",date:"Agora"});save();e.target.reset();toast("Chamado criado com sucesso!");showSection("tickets")}
+function statusBadge(s){let c=s==="Resolvido"?"green":s==="Em andamento"?"amber":"blue";return `<span class="badge ${c}"><i></i>${s}</span>`}
+function priorityBadge(p){let c=p==="Crítica"||p==="Alta"?"red":p==="Média"?"amber":"gray";return `<span class="priority ${c}">${p}</span>`}
+function renderStats(){let open=tickets.filter(t=>t.status==="Aberto").length,prog=tickets.filter(t=>t.status==="Em andamento").length,res=tickets.filter(t=>t.status==="Resolvido").length,high=tickets.filter(t=>t.priority==="Alta"||t.priority==="Crítica").length;["total","donutTotal"].forEach(x=>document.getElementById(x).textContent=tickets.length);progress.textContent=prog;resolved.textContent=res;highEl=document.getElementById("high");highEl.textContent=high;openLegend.textContent=open;progLegend.textContent=prog;resLegend.textContent=res;navCount.textContent=tickets.length}
+function row(t){return `<tr><td><button class="ticket-link" onclick="detail(${t.id})"><b>#${t.id}</b><span>${esc(t.title)}</span></button></td><td>${esc(t.cat)}</td><td>${priorityBadge(t.priority)}</td><td>${statusBadge(t.status)}</td><td>${t.date}</td><td><button class="more" onclick="detail(${t.id})">⋯</button></td></tr>`}
+function renderAll(){renderStats();let q=(document.getElementById("search")?.value||"").toLowerCase(),sf=document.getElementById("filterStatus")?.value||"",pf=document.getElementById("filterPriority")?.value||"";let f=tickets.filter(t=>(!q||(`#${t.id} ${t.title}`).toLowerCase().includes(q))&&(!sf||t.status===sf)&&(!pf||t.priority===pf));document.getElementById("ticketTable").innerHTML=f.map(row).join("")||`<tr><td colspan="6" class="empty">Nenhum chamado encontrado.</td></tr>`;document.getElementById("recentList").innerHTML=tickets.slice(0,3).map(t=>`<button class="recent" onclick="detail(${t.id})"><div class="ticket-icon">${t.cat==="Hardware"?"⌘":t.cat==="Acesso"?"♙":"◫"}</div><div class="recent-main"><b>${esc(t.title)}</b><span>#${t.id} · ${t.cat}</span></div><div class="recent-right">${statusBadge(t.status)}<small>${t.date}</small></div></button>`).join("")}
+function detail(id){let t=tickets.find(x=>x.id===id);document.getElementById("detailSection").innerHTML=`<div class="hero compact"><div><button class="back" onclick="showSection('tickets')">← Voltar aos chamados</button><h1>#${t.id} ${esc(t.title)}</h1><p>Aberto em ${t.date}</p></div>${statusBadge(t.status)}</div><div class="detail-layout"><div class="panel"><div class="panel-head"><div><h2>Descrição</h2><p>Informações da solicitação</p></div></div><p class="description">${esc(t.desc)}</p><div class="detail-meta"><div><small>Categoria</small><b>${t.cat}</b></div><div><small>Prioridade</small>${priorityBadge(t.priority)}</div><div><small>Status</small><select onchange="changeStatus(${t.id},this.value)"><option ${t.status==="Aberto"?"selected":""}>Aberto</option><option ${t.status==="Em andamento"?"selected":""}>Em andamento</option><option ${t.status==="Resolvido"?"selected":""}>Resolvido</option></select></div></div></div><div class="panel side-detail"><h3>Chamado #${t.id}</h3><div class="timeline"><div><i></i><b>Chamado criado</b><small>${t.date}</small></div><div><i></i><b>Status atual: ${t.status}</b><small>Acompanhamento</small></div></div></div></div>`;showSection("detailSection");}
+function changeStatus(id,s){let t=tickets.find(x=>x.id===id);t.status=s;save();toast("Status atualizado!");detail(id)}
+renderAll();
+</script>
+</body>
+</html>
